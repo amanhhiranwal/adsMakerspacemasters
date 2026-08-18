@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://makerspacemasters.com/</loc>
+    <lastmod>2026-08-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://makerspacemasters.com/images/makerspace/master.webp</image:loc>
+      <image:title>Makerspace Masters Innovation Labs</image:title>
+      <image:caption>Turnkey Innovation &amp; STEM Lab Setup for Schools and Colleges</image:caption>
+    </image:image>
+  </url>
+</urlset>

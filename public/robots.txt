@@ -1,0 +1,7 @@
+# robots.txt for Makerspace Masters
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/admin/
+
+Sitemap: https://makerspacemasters.com/sitemap.xml

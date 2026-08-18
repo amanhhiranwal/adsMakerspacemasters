@@ -1,11 +1,6 @@
 import { useState } from "react";
 import {
   ArrowRight,
-  Sparkles,
-  Wrench,
-  Cpu,
-  GraduationCap,
-  CheckCircle2,
   Send,
   Loader2,
   Building2,
@@ -15,7 +10,47 @@ import {
   MapPin,
   Briefcase,
   MessageSquare,
+  CheckCircle2,
+  ShieldCheck,
+  Sparkles,
 } from "lucide-react";
+import FormField from "@/components/ui/FormField";
+import Badge from "@/components/ui/Badge";
+
+const DESIGNATION_OPTIONS = [
+  { value: "Principal", label: "Principal / Director" },
+  { value: "Management", label: "Management / Trustee" },
+  { value: "Educator", label: "Educator / Teacher" },
+  { value: "Trainer", label: "Trainer / STEM Head" },
+  { value: "Other", label: "Other" },
+];
+
+const BENTO_HIGHLIGHTS = [
+  {
+    icon: "✦",
+    title: "Turnkey Setup",
+    desc: "Tools, machines & layout",
+    bg: "bg-[#042741]/10 text-[#042741]",
+  },
+  {
+    icon: "✦",
+    title: "Grade 1-12 STEM",
+    desc: "NEP 2020 curriculum",
+    bg: "bg-[#C9F2B6]/30 text-emerald-900",
+  },
+  {
+    icon: "✦",
+    title: "Teacher Training",
+    desc: "LMS & certifications",
+    bg: "bg-[#4f7c9f]/20 text-[#042741]",
+  },
+  {
+    icon: "✦",
+    title: "18+ Disciplines",
+    desc: "Robotics to Ceramics",
+    bg: "bg-amber-100 text-amber-900",
+  },
+];
 
 export default function HeroSection({ onOpenModal }) {
   const [formData, setFormData] = useState({
@@ -45,10 +80,7 @@ export default function HeroSection({ onOpenModal }) {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = "Please enter your full name.";
-    }
-
+    if (!formData.fullName.trim()) newErrors.fullName = "Please enter your full name.";
     if (!formData.phone.trim()) {
       newErrors.phone = "Please enter your phone number.";
     } else if (!/^[+]?[\d\s\-()]{7,20}$/.test(formData.phone)) {
@@ -61,17 +93,9 @@ export default function HeroSection({ onOpenModal }) {
       newErrors.email = "Please enter a valid email address.";
     }
 
-    if (!formData.institution) {
-      newErrors.institution = "Please select institution type.";
-    }
-
-    if (!formData.city.trim()) {
-      newErrors.city = "Please enter your city.";
-    }
-
-    if (!formData.designation) {
-      newErrors.designation = "Please select your designation.";
-    }
+    if (!formData.institution.trim()) newErrors.institution = "Please enter your institution name.";
+    if (!formData.city.trim()) newErrors.city = "Please enter your city.";
+    if (!formData.designation) newErrors.designation = "Please select your designation.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -124,162 +148,124 @@ export default function HeroSection({ onOpenModal }) {
   return (
     <section
       id="hero"
-      className="relative w-full overflow-hidden min-h-[720px] lg:min-h-[88vh] flex items-center justify-center py-12 md:py-20 bg-white"
+      className="relative w-full overflow-hidden min-h-[700px] lg:min-h-[90vh] flex items-center justify-center py-12 md:py-20 bg-[#FAF9F6]"
     >
       {/* Background WebP Image */}
-      <div className="absolute inset-0 w-full h-full z-0 overflow-hidden">
+      <div className="absolute inset-0 w-full h-full z-0 overflow-hidden pointer-events-none">
         <img
-          src="https://dev.makerspacemasters.com/images/makerspace/master.webp"
-          onError={(e) => {
-            e.currentTarget.src = "/images/makerspace/master.webp";
-          }}
+          src="/images/makerspace/master.webp"
           alt="Makerspace Masters Innovation Labs"
-          className="w-full h-full object-cover object-center"
+          className="w-full h-full object-cover object-center brightness-105 contrast-[1.02]"
           loading="eager"
         />
 
-        {/* Ambient Gradient Overlays for Maximum Text & Form Legibility */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-white/85 to-white/70 lg:bg-gradient-to-r lg:from-white/95 lg:via-white/90 lg:to-white/60" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-white/80 via-transparent to-transparent opacity-70" />
+        {/* Ambient Brand Palette Glows */}
+        <div className="absolute top-1/4 -left-20 w-96 h-96 bg-[#042741]/20 rounded-full blur-3xl pointer-events-none animate-pulse-glow" />
+        <div className="absolute bottom-1/4 left-1/3 w-[500px] h-[500px] bg-[#2b5473]/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/3 right-10 w-96 h-96 bg-[#4f7c9f]/20 rounded-full blur-3xl pointer-events-none" />
+
+        {/* Scrim Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-transparent to-white/25 lg:bg-gradient-to-r lg:from-white/15 lg:via-transparent lg:to-transparent" />
       </div>
 
       {/* Hero Content & Form Split Grid */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           
-          {/* Left Column: Brand Headline, Value Proposition & Key Highlights */}
-          <div className="lg:col-span-7 flex flex-col items-start text-left">
-            {/* NEP 2020 Trust Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-neutral-900 text-white text-xs sm:text-sm font-semibold shadow-md mb-5 border border-white/20 transition hover:scale-102">
-              <span className="w-2 h-2 rounded-full bg-[#C9F2B6] animate-pulse" />
-              <span>NEP 2020 Aligned Innovation & STEM Labs</span>
+          {/* Left Column: Keynote Headline & Value Proposition (Translucent Glass) */}
+          <div className="lg:col-span-7 flex flex-col items-start text-left bg-white/35 backdrop-blur-md p-7 sm:p-9 lg:p-11 rounded-[2.5rem] border border-white/60 shadow-xl shadow-[#042741]/5 hover:bg-white/45 transition-all duration-300">
+            
+            {/* Badge */}
+            <div className="mb-5">
+              {/* <Badge variant="brandGradient">Next-Gen Innovation Labs</Badge> */}
             </div>
 
-            {/* Primary H1 Headline */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-black font-['Montserrat',sans-serif] text-neutral-950 tracking-tight leading-[1.12] mb-5">
-              Transforming Classrooms into{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-neutral-950 via-neutral-800 to-neutral-600 underline decoration-[#C9F2B6] decoration-wavy decoration-from-font underline-offset-8">
-                State-of-the-Art
+            {/* Headline */}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.35rem] font-extrabold font-['Montserrat',sans-serif] text-[#042741] tracking-tight leading-[1.12] mb-4 drop-shadow-xs">
+              Not Just a Lab. <br />
+              <span className="text-[#042741]">
+                A Launchpad for
               </span>{" "}
-              Makerspaces
+              <span className="text-gradient-brand">Creators.</span>
             </h1>
 
-            {/* Subheadline Description */}
-            <p className="text-base sm:text-lg text-neutral-700 font-normal max-w-2xl leading-relaxed mb-8 font-['Work_Sans',sans-serif]">
-              Complete turnkey lab setup, proprietary experiential STEM & robotics curriculum, 18+ multidisciplinary modules, and continuous teacher enablement for schools, colleges & institutions.
+            {/* Subtitle */}
+            <p className="text-base sm:text-lg text-neutral-800 font-medium max-w-2xl leading-relaxed mb-8 font-['Work_Sans',sans-serif]">
+              Complete turnkey makerspace ecosystem for schools and universities. Empower students with hands-on Robotics, 3D Fabrication, AI, Woodworking, and Pottery. NEP 2020 aligned with certified teacher enablement.
             </p>
 
-            {/* Key Feature Pillars */}
-            <div className="grid grid-cols-2 sm:grid-cols-2 gap-3.5 w-full max-w-xl mb-8">
-              <div className="p-3.5 rounded-2xl bg-white/85 backdrop-blur-md border border-neutral-200/70 shadow-xs flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-[#FE9F99]/20 border border-[#FE9F99]/40 flex items-center justify-center text-neutral-900 shrink-0">
-                  <Wrench className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-xs sm:text-sm font-bold text-neutral-900 font-['Montserrat',sans-serif]">
-                    Turnkey Setup
+            {/* Bento Mini Cards */}
+            <div className="grid grid-cols-2 gap-3 w-full max-w-xl mb-8">
+              {BENTO_HIGHLIGHTS.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="p-3.5 rounded-2xl bg-white/70 backdrop-blur-md border border-white/80 shadow-2xs flex items-center gap-3"
+                >
+                  <div className={`w-8 h-8 rounded-xl ${item.bg} flex items-center justify-center font-bold text-sm shrink-0`}>
+                    {item.icon}
                   </div>
-                  <div className="text-[11px] text-neutral-500 font-medium font-['Work_Sans',sans-serif]">
-                    Tools, Machines & Furniture
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-2xl bg-white/85 backdrop-blur-md border border-neutral-200/70 shadow-xs flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-[#C9F2B6]/30 border border-[#C9F2B6]/50 flex items-center justify-center text-neutral-900 shrink-0">
-                  <Cpu className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-xs sm:text-sm font-bold text-neutral-900 font-['Montserrat',sans-serif]">
-                    Robotics & AI
-                  </div>
-                  <div className="text-[11px] text-neutral-500 font-medium font-['Work_Sans',sans-serif]">
-                    Grade 1-12 Hands-on Kits
+                  <div>
+                    <div className="text-xs font-bold text-[#042741] font-['Montserrat',sans-serif]">{item.title}</div>
+                    <div className="text-[11px] text-neutral-600 font-['Work_Sans',sans-serif]">{item.desc}</div>
                   </div>
                 </div>
-              </div>
-
-              <div className="p-3.5 rounded-2xl bg-white/85 backdrop-blur-md border border-neutral-200/70 shadow-xs flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-[#ABBCFE]/30 border border-[#ABBCFE]/50 flex items-center justify-center text-neutral-900 shrink-0">
-                  <GraduationCap className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-xs sm:text-sm font-bold text-neutral-900 font-['Montserrat',sans-serif]">
-                    Teacher Training
-                  </div>
-                  <div className="text-[11px] text-neutral-500 font-medium font-['Work_Sans',sans-serif]">
-                    Certifications & Mentorship
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-2xl bg-white/85 backdrop-blur-md border border-neutral-200/70 shadow-xs flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center text-neutral-900 shrink-0">
-                  <Sparkles className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-xs sm:text-sm font-bold text-neutral-900 font-['Montserrat',sans-serif]">
-                    NEP Compliant
-                  </div>
-                  <div className="text-[11px] text-neutral-500 font-medium font-['Work_Sans',sans-serif]">
-                    Experiential Learning
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
 
-            {/* Quick Action Button & Social Proof */}
+            {/* Action Group */}
             <div className="flex flex-wrap items-center gap-4">
               <button
                 onClick={handleScrollToModules}
-                className="px-6 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 font-semibold rounded-2xl border border-neutral-200 transition-all text-sm flex items-center gap-2 cursor-pointer shadow-xs"
+                className="px-6 py-3.5 bg-gradient-to-r from-[#042741] via-[#2b5473] to-[#4f7c9f] hover:opacity-95 text-white font-bold rounded-2xl transition-all duration-300 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-lg hover:shadow-xl hover:scale-102 font-['Montserrat',sans-serif]"
               >
                 <span>Explore 18+ Lab Modules</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 text-[#C9F2B6]" />
               </button>
-              <div className="text-xs sm:text-sm text-neutral-600 font-medium">
-                ⭐ Trusted by <span className="font-bold text-neutral-900">250+ Institutions</span> across India
+              <div className="text-xs font-semibold text-[#042741] bg-white/75 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/80 shadow-2xs font-['Montserrat',sans-serif]">
+                ⭐ 250+ Schools Across India
               </div>
             </div>
+
           </div>
 
-          {/* Right Column: Hero Contact / Consultation Form */}
+          {/* Right Column: Clean Form (Translucent Glass) */}
           <div className="lg:col-span-5 w-full">
-            <div className="bg-white/95 backdrop-blur-xl rounded-3xl p-6 sm:p-7 shadow-2xl border border-neutral-200/80 ring-1 ring-black/5 relative overflow-hidden">
-              {/* Card Header */}
+            <div className="bg-white/40 backdrop-blur-md rounded-[2.5rem] p-7 sm:p-8 shadow-2xl border border-white/60 relative hover:bg-white/50 transition-all duration-300">
+              
+              {/* Form Header */}
               <div className="mb-5">
-                <div className="inline-block px-3 py-1 bg-[#FE9F99]/20 border border-[#FE9F99]/40 text-neutral-900 rounded-full text-[11px] font-bold uppercase tracking-wider mb-2">
-                  Free Consultation & Demo
+                <div className="mb-2">
+                  {/* <Badge variant="brandLight" icon={Sparkles}>Free Campus Consultation</Badge> */}
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold font-['Montserrat',sans-serif] text-neutral-950 tracking-tight">
+                <h2 className="text-2xl font-extrabold font-['Montserrat',sans-serif] text-[#042741] tracking-tight">
                   Design Your Innovation Lab
                 </h2>
-                <p className="text-xs sm:text-sm text-neutral-600 font-['Work_Sans',sans-serif] mt-1">
-                  Get a personalized lab blueprint, machinery list & pricing for your institution.
+                <p className="text-xs text-neutral-600 font-medium font-['Work_Sans',sans-serif] mt-1">
+                  Get a personalized 3D layout, equipment catalog & investment proposal.
                 </p>
               </div>
 
               {/* Success Notification */}
               {isSuccess ? (
-                <div className="py-8 px-4 text-center flex flex-col items-center justify-center space-y-4 animate-in fade-in zoom-in duration-300">
-                  <div className="w-16 h-16 rounded-full bg-[#C9F2B6]/40 border border-[#C9F2B6] flex items-center justify-center text-neutral-950 shadow-md">
-                    <CheckCircle2 className="w-8 h-8 text-emerald-700" />
+                <div className="py-10 px-4 text-center flex flex-col items-center justify-center space-y-4 animate-in fade-in zoom-in-95 duration-300">
+                  <div className="w-16 h-16 rounded-full bg-[#C9F2B6] flex items-center justify-center text-[#042741] shadow-md">
+                    <CheckCircle2 className="w-9 h-9" />
                   </div>
-                  <h3 className="text-xl font-bold font-['Montserrat',sans-serif] text-neutral-900">
-                    Consultation Booked!
+                  <h3 className="text-2xl font-bold font-['Montserrat',sans-serif] text-[#042741]">
+                    Consultation Requested!
                   </h3>
-                  <p className="text-sm text-neutral-600 max-w-xs font-['Work_Sans',sans-serif]">
-                    Thank you! Our senior makerspace architect will get in touch with you shortly.
+                  <p className="text-xs sm:text-sm text-neutral-600 max-w-xs font-['Work_Sans',sans-serif] leading-relaxed">
+                    Thank you. Our senior innovation architect will connect with you within 24 hours.
                   </p>
                   <button
                     onClick={() => setIsSuccess(false)}
-                    className="mt-2 px-6 py-2.5 bg-neutral-900 text-white rounded-xl text-xs font-bold hover:bg-neutral-800 transition cursor-pointer"
+                    className="mt-2 px-6 py-2.5 bg-[#042741] text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-[#2b5473] transition cursor-pointer"
                   >
                     Submit Another Request
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-3.5 text-left">
+                <form onSubmit={handleSubmit} className="space-y-3 text-left">
                   {apiError && (
                     <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs font-medium">
                       {apiError}
@@ -287,217 +273,115 @@ export default function HeroSection({ onOpenModal }) {
                   )}
 
                   {/* 1. Full Name */}
-                  <div>
-                    <label className="block text-xs font-bold text-neutral-800 mb-1 font-['Montserrat',sans-serif]">
-                      Full Name <span className="text-rose-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        name="fullName"
-                        value={formData.fullName}
-                        onChange={handleChange}
-                        placeholder="e.g. Dr. Rajesh Sharma"
-                        className={`w-full px-3.5 py-2.5 pl-9 text-sm rounded-xl bg-neutral-50 border transition-all outline-none font-['Work_Sans',sans-serif] ${
-                          errors.fullName
-                            ? "border-rose-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-100"
-                            : "border-neutral-200 focus:border-neutral-900 focus:bg-white focus:ring-2 focus:ring-neutral-100"
-                        }`}
-                      />
-                      <User className="w-4 h-4 text-neutral-400 absolute left-3 top-3 pointer-events-none" />
-                    </div>
-                    {errors.fullName && (
-                      <p className="text-[11px] text-rose-500 font-medium mt-1">{errors.fullName}</p>
-                    )}
-                  </div>
+                  <FormField
+                    label="Full Name"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    placeholder="e.g. Dr. Rajesh Sharma"
+                    error={errors.fullName}
+                    icon={User}
+                    required
+                  />
 
-                  {/* 2. Phone Number & Email (2 Columns) */}
+                  {/* 2. Phone & Email (2 Columns) */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold text-neutral-800 mb-1 font-['Montserrat',sans-serif]">
-                        Phone Number <span className="text-rose-500">*</span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="tel"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          placeholder="+91 98765 43210"
-                          className={`w-full px-3.5 py-2.5 pl-9 text-sm rounded-xl bg-neutral-50 border transition-all outline-none font-['Work_Sans',sans-serif] ${
-                            errors.phone
-                              ? "border-rose-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-100"
-                              : "border-neutral-200 focus:border-neutral-900 focus:bg-white focus:ring-2 focus:ring-neutral-100"
-                          }`}
-                        />
-                        <Phone className="w-4 h-4 text-neutral-400 absolute left-3 top-3 pointer-events-none" />
-                      </div>
-                      {errors.phone && (
-                        <p className="text-[11px] text-rose-500 font-medium mt-1">{errors.phone}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-neutral-800 mb-1 font-['Montserrat',sans-serif]">
-                        Email Address <span className="text-rose-500">*</span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          placeholder="name@school.edu"
-                          className={`w-full px-3.5 py-2.5 pl-9 text-sm rounded-xl bg-neutral-50 border transition-all outline-none font-['Work_Sans',sans-serif] ${
-                            errors.email
-                              ? "border-rose-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-100"
-                              : "border-neutral-200 focus:border-neutral-900 focus:bg-white focus:ring-2 focus:ring-neutral-100"
-                          }`}
-                        />
-                        <Mail className="w-4 h-4 text-neutral-400 absolute left-3 top-3 pointer-events-none" />
-                      </div>
-                      {errors.email && (
-                        <p className="text-[11px] text-rose-500 font-medium mt-1">{errors.email}</p>
-                      )}
-                    </div>
+                    <FormField
+                      label="Phone"
+                      name="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder="e.g. +91 98765 43210"
+                      error={errors.phone}
+                      icon={Phone}
+                      required
+                    />
+                    <FormField
+                      label="Email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="e.g. name@school.edu"
+                      error={errors.email}
+                      icon={Mail}
+                      required
+                    />
                   </div>
 
-                  {/* 3. Institution (Dropdown) & City (2 Columns) */}
+                  {/* 3. Institution (Text Input) & City (2 Columns) */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold text-neutral-800 mb-1 font-['Montserrat',sans-serif]">
-                        Institution <span className="text-rose-500">*</span>
-                      </label>
-                      <div className="relative">
-                        <select
-                          name="institution"
-                          value={formData.institution}
-                          onChange={handleChange}
-                          className={`w-full px-3.5 py-2.5 pl-9 text-sm rounded-xl bg-neutral-50 border transition-all outline-none font-['Work_Sans',sans-serif] appearance-none cursor-pointer ${
-                            errors.institution
-                              ? "border-rose-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-100"
-                              : "border-neutral-200 focus:border-neutral-900 focus:bg-white focus:ring-2 focus:ring-neutral-100"
-                          } ${!formData.institution ? "text-neutral-400" : "text-neutral-900"}`}
-                        >
-                          <option value="" disabled>
-                            Select Type
-                          </option>
-                          <option value="School" className="text-neutral-900">School (K-12)</option>
-                          <option value="College" className="text-neutral-900">College / University</option>
-                        </select>
-                        <Building2 className="w-4 h-4 text-neutral-400 absolute left-3 top-3 pointer-events-none" />
-                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-neutral-500">
-                          <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                            <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                          </svg>
-                        </div>
-                      </div>
-                      {errors.institution && (
-                        <p className="text-[11px] text-rose-500 font-medium mt-1">{errors.institution}</p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-neutral-800 mb-1 font-['Montserrat',sans-serif]">
-                        City <span className="text-rose-500">*</span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          name="city"
-                          value={formData.city}
-                          onChange={handleChange}
-                          placeholder="e.g. Mumbai, Bangalore"
-                          className={`w-full px-3.5 py-2.5 pl-9 text-sm rounded-xl bg-neutral-50 border transition-all outline-none font-['Work_Sans',sans-serif] ${
-                            errors.city
-                              ? "border-rose-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-100"
-                              : "border-neutral-200 focus:border-neutral-900 focus:bg-white focus:ring-2 focus:ring-neutral-100"
-                          }`}
-                        />
-                        <MapPin className="w-4 h-4 text-neutral-400 absolute left-3 top-3 pointer-events-none" />
-                      </div>
-                      {errors.city && (
-                        <p className="text-[11px] text-rose-500 font-medium mt-1">{errors.city}</p>
-                      )}
-                    </div>
+                    <FormField
+                      label="Institution"
+                      name="institution"
+                      type="text"
+                      value={formData.institution}
+                      onChange={handleChange}
+                      placeholder="e.g. Heritage International School"
+                      error={errors.institution}
+                      icon={Building2}
+                      required
+                    />
+                    <FormField
+                      label="City"
+                      name="city"
+                      value={formData.city}
+                      onChange={handleChange}
+                      placeholder="e.g. Mumbai, New Delhi"
+                      error={errors.city}
+                      icon={MapPin}
+                      required
+                    />
                   </div>
 
-                  {/* 4. Designation (Dropdown) */}
-                  <div>
-                    <label className="block text-xs font-bold text-neutral-800 mb-1 font-['Montserrat',sans-serif]">
-                      Designation <span className="text-rose-500">*</span>
-                    </label>
-                    <div className="relative">
-                      <select
-                        name="designation"
-                        value={formData.designation}
-                        onChange={handleChange}
-                        className={`w-full px-3.5 py-2.5 pl-9 text-sm rounded-xl bg-neutral-50 border transition-all outline-none font-['Work_Sans',sans-serif] appearance-none cursor-pointer ${
-                          errors.designation
-                            ? "border-rose-400 focus:border-rose-500 focus:ring-2 focus:ring-rose-100"
-                            : "border-neutral-200 focus:border-neutral-900 focus:bg-white focus:ring-2 focus:ring-neutral-100"
-                        } ${!formData.designation ? "text-neutral-400" : "text-neutral-900"}`}
-                      >
-                        <option value="" disabled>
-                          Select Designation
-                        </option>
-                        <option value="Educator" className="text-neutral-900">Educator</option>
-                        <option value="Management" className="text-neutral-900">Management</option>
-                        <option value="Principal" className="text-neutral-900">Principal / Director</option>
-                        <option value="Trainer" className="text-neutral-900">Trainer / STEM Coordinator</option>
-                        <option value="Other" className="text-neutral-900">Other</option>
-                      </select>
-                      <Briefcase className="w-4 h-4 text-neutral-400 absolute left-3 top-3 pointer-events-none" />
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-neutral-500">
-                        <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
-                          <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-                        </svg>
-                      </div>
-                    </div>
-                    {errors.designation && (
-                      <p className="text-[11px] text-rose-500 font-medium mt-1">{errors.designation}</p>
-                    )}
-                  </div>
+                  {/* 4. Designation */}
+                  <FormField
+                    label="Designation"
+                    name="designation"
+                    type="select"
+                    value={formData.designation}
+                    onChange={handleChange}
+                    placeholder="Select Designation"
+                    options={DESIGNATION_OPTIONS}
+                    error={errors.designation}
+                    icon={Briefcase}
+                    required
+                  />
 
-                  {/* 5. Message / Requirements */}
-                  <div>
-                    <label className="block text-xs font-bold text-neutral-800 mb-1 font-['Montserrat',sans-serif]">
-                      Message / Requirements <span className="text-neutral-400 font-normal">(Optional)</span>
-                    </label>
-                    <div className="relative">
-                      <textarea
-                        name="message"
-                        value={formData.message}
-                        onChange={handleChange}
-                        rows={2}
-                        placeholder="Tell us about your campus, student strength, or preferred modules..."
-                        className="w-full px-3.5 py-2.5 pl-9 text-sm rounded-xl bg-neutral-50 border border-neutral-200 focus:border-neutral-900 focus:bg-white focus:ring-2 focus:ring-neutral-100 transition-all outline-none font-['Work_Sans',sans-serif] resize-none"
-                      />
-                      <MessageSquare className="w-4 h-4 text-neutral-400 absolute left-3 top-3 pointer-events-none" />
-                    </div>
-                  </div>
+                  {/* 5. Message */}
+                  <FormField
+                    label="Message / Space Details"
+                    name="message"
+                    type="textarea"
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder="e.g. Looking to set up a 1,200 sq. ft. STEM & Robotics lab for Grades 1-12..."
+                    icon={MessageSquare}
+                  />
 
                   {/* Submit Button */}
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3.5 px-6 bg-[#131313] hover:bg-neutral-800 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl hover:scale-101 text-sm flex items-center justify-center gap-2 group cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed mt-2"
+                    className="w-full py-3.5 px-6 bg-gradient-to-r from-[#042741] via-[#2b5473] to-[#4f7c9f] hover:opacity-95 text-white font-bold rounded-2xl transition-all duration-300 shadow-md hover:shadow-xl hover:scale-[1.01] text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 font-['Montserrat',sans-serif] mt-3"
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>Sending Request...</span>
+                        <Loader2 className="w-4 h-4 animate-spin text-[#C9F2B6]" />
+                        <span>Submitting Request...</span>
                       </>
                     ) : (
                       <>
-                        <span>Get Free Lab Blueprint & Quote</span>
-                        <Send className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                        <span>Get Free Lab Blueprint & Proposal</span>
+                        <Send className="w-3.5 h-3.5 text-[#C9F2B6]" />
                       </>
                     )}
                   </button>
 
-                  <p className="text-[11px] text-center text-neutral-500 font-medium pt-1">
-                    🔒 100% confidential. No spam, guaranteed.
+                  <p className="text-[10px] text-center text-neutral-500 font-medium pt-1 flex items-center justify-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 inline" />
+                    <span>100% confidential. No spam, guaranteed.</span>
                   </p>
                 </form>
               )}

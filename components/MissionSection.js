@@ -1,67 +1,12 @@
 import { useState } from "react";
-import { ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
+import { DIVISIONS_DATA } from "@/data/content";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 export default function MissionSection({ onOpenModal }) {
   const [activeTab, setActiveTab] = useState(1);
 
-  const tabs = [
-    {
-      id: 1,
-      title: "Makerspace Masters",
-      subtitle: "For Schools",
-      themeColor: "bg-[#FE9F99]",
-      badgeColor: "bg-[#FE9F99]/20 text-neutral-900 border-[#FE9F99]/40",
-      image: "/images/index/schools-tab.png",
-      tagline: "Inspiring Young Minds Through Hands-On Creation",
-      description:
-        "Comprehensive K-12 STEM, Robotics, 3D Printing, AI, Pottery, and Woodworking labs fully aligned with NEP 2020 experiential learning standards.",
-      highlights: [
-        "Age-tailored curriculum (Grade 1 to 12)",
-        "Turnkey lab setup: furniture, machinery, tools & storage",
-        "Continuous teacher training & masterclass certifications",
-        "Student assessment portal & project portfolios",
-      ],
-      linkText: "Explore School Labs",
-    },
-    {
-      id: 2,
-      title: "Masters X",
-      subtitle: "For Colleges & Institutions",
-      themeColor: "bg-[#C9F2B6]",
-      badgeColor: "bg-[#C9F2B6]/30 text-neutral-900 border-[#C9F2B6]/50",
-      image: "/images/index/mastersx.png",
-      tagline: "Advanced Innovation & Incubation Ecosystems",
-      description:
-        "Industrial-grade fabrication, IoT, Composite Prototyping, and AI incubation labs designed for engineering colleges, universities, and research hubs.",
-      highlights: [
-        "Industry 4.0 & Mechatronics infrastructure",
-        "Patent filing, prototype testing & incubation support",
-        "Corporate capstone projects & live problem statements",
-        "Faculty enablement & global hackathon mentoring",
-      ],
-      linkText: "Explore Higher Ed Labs",
-    },
-    {
-      id: 3,
-      title: "Masters +",
-      subtitle: "For Partners & Franchisees",
-      themeColor: "bg-[#ABBCFE]",
-      badgeColor: "bg-[#ABBCFE]/30 text-neutral-900 border-[#ABBCFE]/50",
-      image: "/images/index/masters-plus.png",
-      tagline: "Turnkey Makerspace Expansion & Community Labs",
-      description:
-        "Scale high-margin innovation centers and community labs with proven operating blueprints, vetted equipment pipelines, and LMS integration.",
-      highlights: [
-        "Complete business model & ROI framework",
-        "Centralized hardware procurement & warranty support",
-        "Proprietary learning management system (LMS)",
-        "End-to-end operational enablement & branding",
-      ],
-      linkText: "Partner With Us",
-    },
-  ];
-
-  const current = tabs.find((t) => t.id === activeTab) || tabs[0];
+  const current = DIVISIONS_DATA.find((t) => t.id === activeTab) || DIVISIONS_DATA[0];
 
   const handleScrollToContact = () => {
     const el = document.getElementById("contact");
@@ -70,60 +15,72 @@ export default function MissionSection({ onOpenModal }) {
   };
 
   return (
-    <section id="solutions" className="py-24 bg-white text-neutral-900 border-b border-neutral-100">
+    <section id="solutions" className="py-24 bg-[#FAFAFA] text-[#042741] overflow-hidden relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-block px-3 py-1 bg-black/5 rounded-full text-xs font-bold uppercase tracking-wider text-neutral-600 mb-3">
-            Our Divisions
-          </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-['Montserrat',sans-serif] tracking-tight mb-4">
-            One Mission. Three Ways to Build It.
-          </h2>
-          <p className="text-neutral-600 text-base sm:text-lg font-['Work_Sans',sans-serif]">
-            Each division serves a distinct educational purpose, but they all lead to real-world innovation.
-          </p>
-        </div>
+        <SectionHeader
+          title="One Mission."
+          gradientTitle="Three Tailored Ways to Build It."
+          subtitle="Purpose-built frameworks designed specifically for primary schools, high schools, engineering colleges, and innovation partners."
+        />
 
         {/* Division Tab Switcher */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`p-6 rounded-3xl text-left transition-all duration-300 border flex items-center justify-between group cursor-pointer ${
-                activeTab === tab.id
-                  ? `${tab.themeColor} text-neutral-950 border-transparent shadow-lg scale-102`
-                  : "bg-neutral-50 hover:bg-neutral-100/80 text-neutral-800 border-neutral-200"
-              }`}
-            >
-              <div>
-                <h3 className="text-xl font-bold font-['Montserrat',sans-serif]">
-                  {tab.title}
-                </h3>
-                <p className="text-sm font-medium text-neutral-600 font-['Work_Sans',sans-serif] mt-0.5">
-                  {tab.subtitle}
-                </p>
-              </div>
-              <span className={`w-10 h-10 rounded-full flex items-center justify-center transition-transform duration-300 ${
-                activeTab === tab.id ? "bg-black text-white" : "bg-neutral-200 text-neutral-700 group-hover:translate-x-1 group-hover:-translate-y-1"
-              }`}>
-                <ArrowUpRight className="w-5 h-5" />
-              </span>
-            </button>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+          {DIVISIONS_DATA.map((tab) => {
+            const Icon = tab.icon;
+            const isSelected = activeTab === tab.id;
+
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`p-6 rounded-[2rem] text-left transition-all duration-300 border flex items-center justify-between group cursor-pointer ${
+                  isSelected
+                    ? `${tab.themeColor} text-[#042741] border-transparent shadow-lg shadow-black/5 scale-[1.02]`
+                    : "bg-white hover:bg-neutral-100/80 text-neutral-800 border-neutral-200/70"
+                }`}
+              >
+                <div className="flex items-center gap-3.5">
+                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-transform duration-300 ${
+                    isSelected ? "bg-[#042741] text-white" : "bg-[#042741]/10 text-[#042741]"
+                  }`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold font-['Montserrat',sans-serif]">
+                      {tab.title}
+                    </h3>
+                    <p className="text-xs font-medium text-neutral-600 font-['Work_Sans',sans-serif]">
+                      {tab.subtitle}
+                    </p>
+                  </div>
+                </div>
+
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                  isSelected ? "bg-[#042741] text-white" : "bg-neutral-100 text-neutral-400 group-hover:text-neutral-900"
+                }`}>
+                  →
+                </div>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Tab Content Display */}
-        <div className="bg-[#F8F9FA] rounded-[36px] p-8 md:p-12 border border-neutral-200/80 shadow-sm transition-all duration-500">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-            {/* Left: Content */}
+        {/* Tab Bento Content Display */}
+        <div className="bg-white rounded-[2.5rem] p-8 md:p-12 lg:p-14 border border-neutral-200/80 shadow-xl relative overflow-hidden">
+          
+          {/* Subtle gradient corner glow */}
+          <div className={`absolute top-0 right-0 w-96 h-96 bg-gradient-to-bl ${current.themeColorLight} rounded-full blur-3xl pointer-events-none`} />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center relative z-10">
+            {/* Left Content */}
             <div className="lg:col-span-7 space-y-6">
-              <div className={`inline-block px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wider ${current.badgeColor}`}>
+              <div className={`inline-block px-3.5 py-1 rounded-full text-xs font-bold border uppercase tracking-wider font-['Montserrat',sans-serif] ${current.badgeColor}`}>
                 {current.subtitle}
               </div>
 
-              <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold font-['Montserrat',sans-serif] text-neutral-900 leading-tight">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold font-['Montserrat',sans-serif] text-[#042741] leading-tight">
                 {current.tagline}
               </h3>
 
@@ -134,37 +91,40 @@ export default function MissionSection({ onOpenModal }) {
               {/* Highlights */}
               <div className="space-y-3 pt-2">
                 {current.highlights.map((item, idx) => (
-                  <div key={idx} className="flex items-start gap-3 text-neutral-700 font-medium text-sm md:text-base font-['Work_Sans',sans-serif]">
-                    <CheckCircle2 className="w-5 h-5 text-neutral-900 shrink-0 mt-0.5" />
+                  <div key={idx} className="flex items-start gap-3 text-neutral-800 font-medium text-sm md:text-base font-['Work_Sans',sans-serif]">
+                    <div className={`w-5 h-5 rounded-full ${current.accentBg} flex items-center justify-center shrink-0 mt-0.5`}>
+                      <span className={`text-xs font-bold ${current.textColor}`}>✓</span>
+                    </div>
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
 
-              {/* CTA Button */}
-              <div className="pt-6">
+              {/* CTA Button with Brand Gradient */}
+              <div className="pt-4">
                 <button
                   onClick={handleScrollToContact}
-                  className="px-8 py-3.5 bg-[#131313] hover:bg-neutral-800 text-white rounded-2xl font-semibold text-sm transition-all shadow-md hover:shadow-xl flex items-center gap-2"
+                  className="px-7 py-3.5 bg-gradient-to-r from-[#042741] via-[#2b5473] to-[#4f7c9f] hover:opacity-95 text-white rounded-2xl font-bold text-xs uppercase tracking-wider transition-all duration-300 shadow-md hover:shadow-xl flex items-center gap-2 cursor-pointer font-['Montserrat',sans-serif]"
                 >
-                  {current.linkText}
-                  <ArrowUpRight className="w-4 h-4" />
+                  <span>{current.linkText}</span>
+                  <ArrowRight className="w-4 h-4 text-[#C9F2B6]" />
                 </button>
               </div>
             </div>
 
-            {/* Right: Image Graphic */}
+            {/* Right Photo Bento Card */}
             <div className="lg:col-span-5 relative flex justify-center">
-              <div className="relative w-full max-w-md aspect-4/3 rounded-3xl overflow-hidden shadow-xl border border-white">
+              <div className="relative w-full aspect-4/3 rounded-3xl overflow-hidden shadow-2xl border border-neutral-100 group">
                 <img
                   src={current.image}
                   alt={current.title}
-                  className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
             </div>
           </div>
         </div>
+
       </div>
     </section>
   );

@@ -1,37 +1,26 @@
 import { useState, useEffect } from "react";
 import { Menu, X, ArrowRight } from "lucide-react";
+import { NAV_LINKS, ROTATING_WORDS } from "@/data/content";
 
 export default function Navbar({ onOpenModal }) {
   const [rotatingIndex, setRotatingIndex] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  const rotatingWords = ["learners", "builders", "innovators"];
-
   useEffect(() => {
     const interval = setInterval(() => {
-      setRotatingIndex((prev) => (prev + 1) % rotatingWords.length);
-    }, 2500);
+      setRotatingIndex((prev) => (prev + 1) % ROTATING_WORDS.length);
+    }, 2800);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 30);
+      setScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const navLinks = [
-    { label: "Overview", href: "#hero" },
-    { label: "Impact", href: "#stats" },
-    { label: "Divisions", href: "#solutions" },
-    { label: "Lab Modules", href: "#modules" },
-    { label: "Testimonials", href: "#testimonials" },
-    { label: "FAQs", href: "#faq" },
-    { label: "Contact", href: "#contact" },
-  ];
 
   const handleNavClick = (e, href) => {
     e.preventDefault();
@@ -48,20 +37,27 @@ export default function Navbar({ onOpenModal }) {
     }
   };
 
+  const currentHighlight = ROTATING_WORDS[rotatingIndex];
+
   return (
     <>
-      {/* Top Banner Ticker */}
-      <div className="bg-[#131313] text-white py-2 px-4 text-center text-xs md:text-sm font-medium flex items-center justify-center gap-1.5 overflow-hidden z-50 relative">
-        <span>Designing future-ready innovation labs for</span>
-        <span className="inline-block min-w-[75px] text-left font-bold text-[#C9F2B6] transition-all duration-300">
-          {rotatingWords[rotatingIndex]}
+      {/* Top Ambient Ticker in Base #042741 */}
+      <div className="bg-[#042741] text-neutral-200 py-2 px-4 text-center text-xs font-medium flex items-center justify-center gap-2 border-b border-[#2b5473]/30 relative z-50">
+        <span className="hidden sm:inline text-neutral-300">Transforming K-12 & Higher Ed into Innovation Hubs for</span>
+        <span className="sm:hidden text-neutral-300">Labs built for</span>
+        <span
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border transition-all duration-500 ${currentHighlight.color}`}
+        >
+          {currentHighlight.text}
         </span>
       </div>
 
-      {/* Main Single Page Navbar */}
+      {/* Main Apple-Inspired Floating Header */}
       <header
-        className={`sticky top-0 z-40 w-full transition-all duration-300 ${
-          scrolled ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-neutral-100 py-3" : "bg-white/80 backdrop-blur-md py-4"
+        className={`sticky top-0 z-40 w-full transition-all duration-500 ${
+          scrolled
+            ? "bg-white/85 backdrop-blur-2xl border-b border-[#042741]/10 shadow-sm py-3"
+            : "bg-white/70 backdrop-blur-xl py-4 border-b border-transparent"
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -74,79 +70,80 @@ export default function Navbar({ onOpenModal }) {
             <img
               src="/images/common/mainLogo.svg"
               alt="Makerspace Masters"
-              className="h-10 md:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-102"
+              className="h-9 md:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-102"
             />
           </a>
 
-          {/* Desktop In-Page Anchor Navigation */}
-          <nav className="hidden lg:flex items-center gap-7 text-sm font-semibold text-neutral-700">
-            {navLinks.map((link) => (
+          {/* Desktop Links */}
+          <nav className="hidden lg:flex items-center gap-8 text-xs font-semibold text-neutral-700 uppercase tracking-wider font-['Montserrat',sans-serif]">
+            {NAV_LINKS.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="hover:text-black transition-colors duration-200 cursor-pointer"
+                className="hover:text-[#042741] transition-colors duration-200 cursor-pointer relative py-1"
               >
                 {link.label}
               </a>
             ))}
           </nav>
 
-          {/* Right Action */}
+          {/* Right Action Button with Brand Gradient */}
           <div className="hidden lg:flex items-center gap-3">
             <button
               onClick={onOpenModal}
-              className="px-6 py-2.5 bg-[#131313] hover:bg-neutral-800 text-white rounded-full text-sm font-semibold transition-all shadow-md hover:shadow-lg hover:scale-102 flex items-center gap-2"
+              className="px-5 py-2.5 bg-gradient-to-r from-[#042741] via-[#2b5473] to-[#4f7c9f] hover:opacity-95 text-white rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-md hover:shadow-lg hover:scale-102 flex items-center gap-2 cursor-pointer font-['Montserrat',sans-serif]"
             >
-              Book Your Demo
-              <ArrowRight className="w-4 h-4" />
+              <span>Book Demo</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#C9F2B6]" />
             </button>
           </div>
 
-          {/* Mobile Hamburger Toggle */}
+          {/* Mobile Menu Toggle */}
           <div className="flex items-center gap-2 lg:hidden">
             <button
               onClick={onOpenModal}
-              className="px-4 py-2 bg-[#131313] text-white rounded-full text-xs font-semibold"
+              className="px-3.5 py-1.5 bg-gradient-to-r from-[#042741] to-[#2b5473] text-white rounded-full text-xs font-bold font-['Montserrat',sans-serif]"
             >
-              Book Demo
+              Demo
             </button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 rounded-xl text-neutral-800 hover:bg-neutral-100 transition"
-              aria-label="Toggle menu"
+              className="p-2 rounded-xl text-[#042741] hover:bg-neutral-100 transition"
+              aria-label="Toggle navigation"
             >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Single Page Drawer Menu */}
+      {/* Mobile Drawer */}
       {isMenuOpen && (
-        <div className="fixed inset-0 top-24 z-30 bg-white/95 backdrop-blur-xl lg:hidden p-6 overflow-y-auto">
-          <nav className="flex flex-col gap-5 text-lg font-semibold text-neutral-800">
-            {navLinks.map((link) => (
+        <div className="fixed inset-0 top-[88px] z-30 bg-white/95 backdrop-blur-2xl lg:hidden p-6 overflow-y-auto animate-in fade-in slide-in-from-top-4 duration-300">
+          <nav className="flex flex-col gap-4 text-base font-semibold text-[#042741] font-['Montserrat',sans-serif]">
+            {NAV_LINKS.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className="py-2 border-b border-neutral-100 hover:text-black"
+                className="py-3 border-b border-neutral-100 hover:text-[#2b5473] flex items-center justify-between"
               >
-                {link.label}
+                <span>{link.label}</span>
+                <ArrowRight className="w-4 h-4 text-neutral-400" />
               </a>
             ))}
 
-            <div className="pt-6">
+            <div className="pt-4">
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
                   onOpenModal();
                 }}
-                className="w-full py-3.5 bg-[#131313] text-white rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg"
+                className="w-full py-3.5 bg-gradient-to-r from-[#042741] via-[#2b5473] to-[#4f7c9f] text-white rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg cursor-pointer"
               >
-                Book Your Demo
-                <ArrowRight className="w-4 h-4" />
+                <span>Book Campus Consultation</span>
+                <ArrowRight className="w-4 h-4 text-[#C9F2B6]" />
               </button>
             </div>
           </nav>
