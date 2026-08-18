@@ -43,6 +43,28 @@ export default function ContactModal({ isOpen, onClose }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Phone: allow only digits and maximum 10 digits
+    if (name === "phone") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 10);
+
+      setFormData((prev) => ({
+        ...prev,
+        phone: numericValue,
+      }));
+
+      if (errors.phone) {
+        setErrors((prev) => ({
+          ...prev,
+          phone: "",
+        }));
+      }
+
+      if (apiError) setApiError("");
+
+      return;
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
@@ -55,15 +77,15 @@ export default function ContactModal({ isOpen, onClose }) {
     if (!formData.fullName.trim()) newErrors.fullName = "Full name is required.";
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required.";
-    } else if (!/^[+]?[\d\s\-()]{7,20}$/.test(formData.phone)) {
-      newErrors.phone = "Please enter a valid phone number.";
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Please enter a valid 10-digit phone number.";
     }
     if (!formData.email.trim()) {
       newErrors.email = "Email is required.";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Please enter a valid email address.";
     }
-    if (!formData.institution.trim()) newErrors.institution = "Institution name is required.";
+    if (!formData.institution.trim()) newErrors.institution = "School / Institution name is required.";
     if (!formData.city.trim()) newErrors.city = "City is required.";
     if (!formData.designation) newErrors.designation = "Select designation.";
 
@@ -184,10 +206,13 @@ export default function ContactModal({ isOpen, onClose }) {
                 type="tel"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="e.g. +91 98765 43210"
+                placeholder="e.g. 9876543210"
                 error={errors.phone}
                 icon={Phone}
                 required
+                maxLength={10}
+                inputMode="numeric"
+                pattern="[0-9]{10}"
               />
               <FormField
                 label="Email"
@@ -204,7 +229,7 @@ export default function ContactModal({ isOpen, onClose }) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <FormField
-                label="Institution"
+                label="School / Institution"
                 name="institution"
                 type="text"
                 value={formData.institution}
