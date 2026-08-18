@@ -98,6 +98,7 @@ export default function HeroSection({ onOpenModal }) {
 
     if (!formData.fullName.trim())
       newErrors.fullName = "Please enter your full name.";
+    
     if (!formData.phone.trim()) {
       newErrors.phone = "Please enter your phone number.";
     } else if (!/^\d{10}$/.test(formData.phone)) {
