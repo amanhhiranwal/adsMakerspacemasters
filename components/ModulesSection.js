@@ -21,7 +21,7 @@ export default function ModulesSection() {
           badgeIcon={Sparkles}
           badgeVariant="brandLight"
           title="21+ Interconnected"
-          gradientTitle="Learning Disciplines"
+          gradientTitle="Learning Modules"
           subtitle="Modular, scalable, and tailored to empower students from foundational curiosity to high-tech mastery."
           centered={false}
         />

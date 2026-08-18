@@ -243,7 +243,7 @@ export default function HeroSection({ onOpenModal }) {
                 onClick={handleScrollToModules}
                 className="px-6 py-3.5 bg-gradient-to-r from-[#042741] via-[#2b5473] to-[#4f7c9f] hover:opacity-95 text-white font-bold rounded-2xl transition-all duration-300 text-xs uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-lg hover:shadow-xl hover:scale-102 font-['Montserrat',sans-serif]"
               >
-                <span>Explore 18+ Lab Modules</span>
+                <span>Explore 21+ Lab Modules</span>
                 <ArrowRight className="w-4 h-4 text-[#C9F2B6]" />
               </button>
               <div className="text-xs font-semibold text-[#042741] bg-white/75 backdrop-blur-md px-4 py-2.5 rounded-2xl border border-white/80 shadow-2xs font-['Montserrat',sans-serif]">
