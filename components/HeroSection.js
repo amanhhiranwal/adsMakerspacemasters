@@ -98,7 +98,7 @@ export default function HeroSection({ onOpenModal }) {
 
     if (!formData.fullName.trim())
       newErrors.fullName = "Please enter your full name.";
-    
+
     if (!formData.phone.trim()) {
       newErrors.phone = "Please enter your phone number.";
     } else if (!/^\d{10}$/.test(formData.phone)) {
@@ -112,7 +112,7 @@ export default function HeroSection({ onOpenModal }) {
     }
 
     if (!formData.institution.trim())
-      newErrors.institution = "Please enter your institution name.";
+      newErrors.institution = "Please enter your school / institution name.";
     if (!formData.city.trim()) newErrors.city = "Please enter your city.";
     if (!formData.designation)
       newErrors.designation = "Please select your designation.";
@@ -341,7 +341,7 @@ export default function HeroSection({ onOpenModal }) {
                   {/* 3. Institution (Text Input) & City (2 Columns) */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <FormField
-                      label="Institution"
+                      label="School / Institution"
                       name="institution"
                       type="text"
                       value={formData.institution}
