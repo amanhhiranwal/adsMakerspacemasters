@@ -112,7 +112,7 @@ export default function HeroSection({ onOpenModal }) {
     }
 
     if (!formData.institution.trim())
-      newErrors.institution = "Please enter your institution name.";
+      newErrors.institution = "Please enter your school / institution name.";
     if (!formData.city.trim()) newErrors.city = "Please enter your city.";
     if (!formData.designation)
       newErrors.designation = "Please select your designation.";
