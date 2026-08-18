@@ -70,6 +70,22 @@ export default function HeroSection({ onOpenModal }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    // Phone: allow only digits and maximum 10 digits
+    if (name === "phone") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 10);
+      setFormData((prev) => ({
+        ...prev,
+        phone: numericValue,
+      }));
+
+      if (errors.phone) {
+        setErrors((prev) => ({ ...prev, phone: "" }));
+      }
+
+      if (apiError) setApiError("");
+      return;
+    }
+
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: "" }));
@@ -80,11 +96,13 @@ export default function HeroSection({ onOpenModal }) {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.fullName.trim()) newErrors.fullName = "Please enter your full name.";
+    if (!formData.fullName.trim())
+      newErrors.fullName = "Please enter your full name.";
+    
     if (!formData.phone.trim()) {
       newErrors.phone = "Please enter your phone number.";
-    } else if (!/^[+]?[\d\s\-()]{7,20}$/.test(formData.phone)) {
-      newErrors.phone = "Please enter a valid phone number.";
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Please enter a valid 10-digit phone number.";
     }
 
     if (!formData.email.trim()) {
@@ -93,9 +111,11 @@ export default function HeroSection({ onOpenModal }) {
       newErrors.email = "Please enter a valid email address.";
     }
 
-    if (!formData.institution.trim()) newErrors.institution = "Please enter your institution name.";
+    if (!formData.institution.trim())
+      newErrors.institution = "Please enter your institution name.";
     if (!formData.city.trim()) newErrors.city = "Please enter your city.";
-    if (!formData.designation) newErrors.designation = "Please select your designation.";
+    if (!formData.designation)
+      newErrors.designation = "Please select your designation.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -171,10 +191,8 @@ export default function HeroSection({ onOpenModal }) {
       {/* Hero Content & Form Split Grid */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          
           {/* Left Column: Keynote Headline & Value Proposition (Translucent Glass) */}
           <div className="lg:col-span-7 flex flex-col items-start text-left bg-white/35 backdrop-blur-md p-7 sm:p-9 lg:p-11 rounded-[2.5rem] border border-white/60 shadow-xl shadow-[#042741]/5 hover:bg-white/45 transition-all duration-300">
-            
             {/* Badge */}
             <div className="mb-5">
               {/* <Badge variant="brandGradient">Next-Gen Innovation Labs</Badge> */}
@@ -183,15 +201,16 @@ export default function HeroSection({ onOpenModal }) {
             {/* Headline */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.35rem] font-extrabold font-['Montserrat',sans-serif] text-[#042741] tracking-tight leading-[1.12] mb-4 drop-shadow-xs">
               Not Just a Lab. <br />
-              <span className="text-[#042741]">
-                A Launchpad for
-              </span>{" "}
+              <span className="text-[#042741]">A Launchpad for</span>{" "}
               <span className="text-gradient-brand">Creators.</span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-base sm:text-lg text-neutral-800 font-medium max-w-2xl leading-relaxed mb-8 font-['Work_Sans',sans-serif]">
-              Complete turnkey makerspace ecosystem for schools and universities. Empower students with hands-on Robotics, 3D Fabrication, AI, Woodworking, and Pottery. NEP 2020 aligned with certified teacher enablement.
+              Complete turnkey makerspace ecosystem for schools and
+              universities. Empower students with hands-on Robotics, 3D
+              Fabrication, AI, Woodworking, and Pottery. NEP 2020 aligned with
+              certified teacher enablement.
             </p>
 
             {/* Bento Mini Cards */}
@@ -201,12 +220,18 @@ export default function HeroSection({ onOpenModal }) {
                   key={idx}
                   className="p-3.5 rounded-2xl bg-white/70 backdrop-blur-md border border-white/80 shadow-2xs flex items-center gap-3"
                 >
-                  <div className={`w-8 h-8 rounded-xl ${item.bg} flex items-center justify-center font-bold text-sm shrink-0`}>
+                  <div
+                    className={`w-8 h-8 rounded-xl ${item.bg} flex items-center justify-center font-bold text-sm shrink-0`}
+                  >
                     {item.icon}
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-[#042741] font-['Montserrat',sans-serif]">{item.title}</div>
-                    <div className="text-[11px] text-neutral-600 font-['Work_Sans',sans-serif]">{item.desc}</div>
+                    <div className="text-xs font-bold text-[#042741] font-['Montserrat',sans-serif]">
+                      {item.title}
+                    </div>
+                    <div className="text-[11px] text-neutral-600 font-['Work_Sans',sans-serif]">
+                      {item.desc}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -225,13 +250,11 @@ export default function HeroSection({ onOpenModal }) {
                 ⭐ 250+ Schools Across India
               </div>
             </div>
-
           </div>
 
           {/* Right Column: Clean Form (Translucent Glass) */}
           <div className="lg:col-span-5 w-full">
             <div className="bg-white/40 backdrop-blur-md rounded-[2.5rem] p-7 sm:p-8 shadow-2xl border border-white/60 relative hover:bg-white/50 transition-all duration-300">
-              
               {/* Form Header */}
               <div className="mb-5">
                 <div className="mb-2">
@@ -241,7 +264,8 @@ export default function HeroSection({ onOpenModal }) {
                   Design Your Innovation Lab
                 </h2>
                 <p className="text-xs text-neutral-600 font-medium font-['Work_Sans',sans-serif] mt-1">
-                  Get a personalized 3D layout, equipment catalog & investment proposal.
+                  Get a personalized 3D layout, equipment catalog & investment
+                  proposal.
                 </p>
               </div>
 
@@ -255,7 +279,8 @@ export default function HeroSection({ onOpenModal }) {
                     Consultation Requested!
                   </h3>
                   <p className="text-xs sm:text-sm text-neutral-600 max-w-xs font-['Work_Sans',sans-serif] leading-relaxed">
-                    Thank you. Our senior innovation architect will connect with you within 24 hours.
+                    Thank you. Our senior innovation architect will connect with
+                    you within 24 hours.
                   </p>
                   <button
                     onClick={() => setIsSuccess(false)}
@@ -292,10 +317,13 @@ export default function HeroSection({ onOpenModal }) {
                       type="tel"
                       value={formData.phone}
                       onChange={handleChange}
-                      placeholder="e.g. +91 98765 43210"
+                      placeholder="e.g. 9876543210"
                       error={errors.phone}
                       icon={Phone}
                       required
+                      maxLength={10}
+                      inputMode="numeric"
+                      pattern="[0-9]{10}"
                     />
                     <FormField
                       label="Email"
@@ -387,7 +415,6 @@ export default function HeroSection({ onOpenModal }) {
               )}
             </div>
           </div>
-
         </div>
       </div>
     </section>

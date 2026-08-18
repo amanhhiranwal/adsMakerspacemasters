@@ -31,11 +31,16 @@ export default async function handler(req, res) {
         source,
       } = req.body || {};
 
-      const resolvedName = (fullName || `${first_name || ""} ${last_name || ""}`).trim();
+      const resolvedName = (
+        fullName || `${first_name || ""} ${last_name || ""}`
+      ).trim();
       const resolvedEmail = (email || "").trim();
       const resolvedPhone = (phone || "").trim();
       const resolvedInstitution =
-        institution || (type === "mastersx" ? "College" : "School") || type || "School";
+        institution ||
+        (type === "mastersx" ? "College" : "School") ||
+        type ||
+        "School";
       const resolvedCity = (city || location || "").trim();
       const resolvedDesignation = designation || role || "Other";
       const resolvedMessage = (message || comment || requirements || "").trim();
@@ -43,7 +48,16 @@ export default async function handler(req, res) {
       if (!resolvedName || !resolvedEmail || !resolvedPhone) {
         return res.status(422).json({
           success: false,
-          message: "Please provide your full name, email address, and phone number.",
+          message:
+            "Please provide your full name, email address, and phone number.",
+        });
+      }
+
+      // Phone number must be exactly 10 digits
+      if (!/^\d{10}$/.test(resolvedPhone)) {
+        return res.status(422).json({
+          success: false,
+          message: "Please enter a valid 10-digit phone number.",
         });
       }
 
@@ -85,7 +99,8 @@ export default async function handler(req, res) {
   if (!session) {
     return res.status(401).json({
       success: false,
-      message: "Unauthorized. Admin authentication required to access lead records.",
+      message:
+        "Unauthorized. Admin authentication required to access lead records.",
     });
   }
 
@@ -112,13 +127,17 @@ export default async function handler(req, res) {
       const { id, status, notes } = req.body || {};
 
       if (!id) {
-        return res.status(422).json({ success: false, message: "Enquiry ID is required." });
+        return res
+          .status(422)
+          .json({ success: false, message: "Enquiry ID is required." });
       }
 
       const updated = await updateEnquiryStatus(id, status, notes);
 
       if (!updated) {
-        return res.status(404).json({ success: false, message: "Enquiry not found." });
+        return res
+          .status(404)
+          .json({ success: false, message: "Enquiry not found." });
       }
 
       return res.status(200).json({
@@ -128,7 +147,9 @@ export default async function handler(req, res) {
       });
     } catch (error) {
       console.error("PATCH /api/enquiries error:", error);
-      return res.status(500).json({ success: false, message: "Failed to update enquiry." });
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to update enquiry." });
     }
   }
 
@@ -138,13 +159,17 @@ export default async function handler(req, res) {
       const { id } = req.query;
 
       if (!id) {
-        return res.status(422).json({ success: false, message: "Enquiry ID is required." });
+        return res
+          .status(422)
+          .json({ success: false, message: "Enquiry ID is required." });
       }
 
       const deleted = await deleteEnquiryById(id);
 
       if (!deleted) {
-        return res.status(404).json({ success: false, message: "Enquiry not found." });
+        return res
+          .status(404)
+          .json({ success: false, message: "Enquiry not found." });
       }
 
       return res.status(200).json({
@@ -153,9 +178,13 @@ export default async function handler(req, res) {
       });
     } catch (error) {
       console.error("DELETE /api/enquiries error:", error);
-      return res.status(500).json({ success: false, message: "Failed to delete enquiry." });
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to delete enquiry." });
     }
   }
 
-  return res.status(405).json({ success: false, message: "Method not allowed" });
+  return res
+    .status(405)
+    .json({ success: false, message: "Method not allowed" });
 }
