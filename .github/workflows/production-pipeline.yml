@@ -1,68 +1,140 @@
-name: Nexus-20 Production Pipeline
+name: Nexus-20 Production Deployment
 
-# Trigger the pipeline securely on pushes to the main branch
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
-# Concurrency limits to terminate redundant pipeline compute cycles
+  workflow_dispatch:
+
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: production-deployment
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
-    name: Build & Programmatic Deploy
+  deploy:
+    name: Build & Deploy to Production
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📥 Checkout Repository
+
+      # ---------------------------------------------------------
+      # 1. Checkout
+      # ---------------------------------------------------------
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: ⚙️ Setup Node.js 20
+
+      # ---------------------------------------------------------
+      # 2. Setup Node.js
+      # ---------------------------------------------------------
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: npm
 
-      - name: 📦 Restore Next.js Cache
-        uses: actions/cache@v4
-        with:
-          path: .next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.[jt]s', '**/*.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      - name: 🏗️ Install Dependencies
+      # ---------------------------------------------------------
+      # 3. Install dependencies
+      # ---------------------------------------------------------
+      - name: Install Dependencies
         run: npm ci
 
-      # Static Analysis (Linting) has been deliberately removed per engineering directive.
 
-      - name: 🏭 Compile Next.js Build
+      # ---------------------------------------------------------
+      # 4. Build application
+      # ---------------------------------------------------------
+      - name: Build Next.js Application
         env:
-          # Injected into the runner's RAM for build-time operations
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_SSLMODE: ${{ secrets.DB_SSLMODE }}
+
           ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           ADMIN_SESSION_SECRET: ${{ secrets.ADMIN_SESSION_SECRET }}
+
         run: npm run build
 
-      - name: 🚀 Programmatic Deployment (IaC)
-        env:
-          # Injected into the runner's RAM for the deployment script
-          DEPLOY_TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
-          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-          ADMIN_SESSION_SECRET: ${{ secrets.ADMIN_SESSION_SECRET }}
+
+      # ---------------------------------------------------------
+      # 5. Configure SSH
+      # ---------------------------------------------------------
+      - name: Configure SSH
         run: |
-          echo "Initiating deployment without static analysis gate..."
-          
-          # This command bridges the air-gap. It deploys the compiled artifact 
-          # AND programmatically injects the variables into the host's runtime memory.
-          
-          npx vercel deploy --prod --token $DEPLOY_TOKEN --yes \
-            --env DATABASE_URL=$DATABASE_URL \
-            --env ADMIN_USERNAME=$ADMIN_USERNAME \
-            --env ADMIN_PASSWORD=$ADMIN_PASSWORD \
-            --env ADMIN_SESSION_SECRET=$ADMIN_SESSION_SECRET
+          mkdir -p ~/.ssh
+
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/deploy_key
+
+          chmod 600 ~/.ssh/deploy_key
+
+          ssh-keyscan -H "${{ secrets.SERVER_HOST }}" >> ~/.ssh/known_hosts
+
+
+      # ---------------------------------------------------------
+      # 6. Deploy to Server
+      # ---------------------------------------------------------
+      - name: Deploy to Production Server
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+
+        run: |
+          ssh \
+            -i ~/.ssh/deploy_key \
+            "$SERVER_USER@$SERVER_HOST" << 'EOF'
+
+            set -e
+
+            echo "========================================"
+            echo "Starting production deployment"
+            echo "========================================"
+
+            cd /var/www/ads
+
+            echo "Pulling latest code..."
+
+            git fetch origin
+
+            git reset --hard origin/main
+
+            echo "Installing dependencies..."
+
+            npm ci
+
+            echo "Creating environment file..."
+
+            cat > .env << 'ENVEOF'
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_SSLMODE=${{ secrets.DB_SSLMODE }}
+
+          ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}
+          ADMIN_SESSION_SECRET=${{ secrets.ADMIN_SESSION_SECRET }}
+          ENVEOF
+
+            chmod 600 .env
+
+            echo "Building Next.js..."
+
+            npm run build
+
+            echo "Restarting application..."
+
+            pm2 restart ads || pm2 start npm --name ads -- start
+
+            pm2 save
+
+            echo "========================================"
+            echo "Deployment completed successfully"
+            echo "========================================"
+
+          EOF
