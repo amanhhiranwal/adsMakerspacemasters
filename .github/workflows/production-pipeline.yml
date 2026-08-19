@@ -94,7 +94,7 @@ jobs:
             echo "Starting production deployment"
             echo "========================================"
 
-            cd /var/www/ads
+            cd /var/www/adsMakerspacemasters
 
             echo "Pulling latest code..."
 
