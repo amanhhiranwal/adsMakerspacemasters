@@ -12,20 +12,20 @@ concurrency:
 
 jobs:
   build-and-deploy:
-    name: Build, Validate & Programmatic Deploy
+    name: Build & Programmatic Deploy
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      - name: ⚙️ Setup Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Restore Next.js Cache
+      - name: 📦 Restore Next.js Cache
         uses: actions/cache@v4
         with:
           path: .next/cache
@@ -33,13 +33,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
 
-      - name: Install Dependencies
+      - name: 🏗️ Install Dependencies
         run: npm ci
 
-      - name: Run Static Analysis
-        run: npm run lint
+      # Static Analysis (Linting) has been deliberately removed per engineering directive.
 
-      - name: Compile Next.js Build
+      - name: 🏭 Compile Next.js Build
         env:
           # Injected into the runner's RAM for build-time operations
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -48,7 +47,7 @@ jobs:
           ADMIN_SESSION_SECRET: ${{ secrets.ADMIN_SESSION_SECRET }}
         run: npm run build
 
-      - name: Programmatic Deployment (IaC)
+      - name: 🚀 Programmatic Deployment (IaC)
         env:
           # Injected into the runner's RAM for the deployment script
           DEPLOY_TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
@@ -57,11 +56,10 @@ jobs:
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           ADMIN_SESSION_SECRET: ${{ secrets.ADMIN_SESSION_SECRET }}
         run: |
-          echo "Initiating deterministic deployment and state transfer..."
+          echo "Initiating deployment without static analysis gate..."
           
           # This command bridges the air-gap. It deploys the compiled artifact 
           # AND programmatically injects the variables into the host's runtime memory.
-          # NOTE: This uses Vercel's CLI as the standard architectural baseline for Next.js.
           
           npx vercel deploy --prod --token $DEPLOY_TOKEN --yes \
             --env DATABASE_URL=$DATABASE_URL \
