@@ -1,0 +1,70 @@
+name: Nexus-20 Production Pipeline
+
+# Trigger the pipeline securely on pushes to the main branch
+on:
+  push:
+    branches: [ "main" ]
+
+# Concurrency limits to terminate redundant pipeline compute cycles
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    name: Build, Validate & Programmatic Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Restore Next.js Cache
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.[jt]s', '**/*.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Static Analysis
+        run: npm run lint
+
+      - name: Compile Next.js Build
+        env:
+          # Injected into the runner's RAM for build-time operations
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          ADMIN_SESSION_SECRET: ${{ secrets.ADMIN_SESSION_SECRET }}
+        run: npm run build
+
+      - name: Programmatic Deployment (IaC)
+        env:
+          # Injected into the runner's RAM for the deployment script
+          DEPLOY_TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          ADMIN_SESSION_SECRET: ${{ secrets.ADMIN_SESSION_SECRET }}
+        run: |
+          echo "Initiating deterministic deployment and state transfer..."
+          
+          # This command bridges the air-gap. It deploys the compiled artifact 
+          # AND programmatically injects the variables into the host's runtime memory.
+          # NOTE: This uses Vercel's CLI as the standard architectural baseline for Next.js.
+          
+          npx vercel deploy --prod --token $DEPLOY_TOKEN --yes \
+            --env DATABASE_URL=$DATABASE_URL \
+            --env ADMIN_USERNAME=$ADMIN_USERNAME \
+            --env ADMIN_PASSWORD=$ADMIN_PASSWORD \
+            --env ADMIN_SESSION_SECRET=$ADMIN_SESSION_SECRET
